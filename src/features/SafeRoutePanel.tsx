@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { GoogleMap } from '@react-google-maps/api';
 import { Navigation, MapPin } from 'lucide-react';
 import { useSystemStore } from '../store/useSystemStore';
-import { useSystemStore } from '../store/useSystemStore';
+
 
 const containerStyle = { width: '100%', height: '100%' };
 const center = { lat: 40.7128, lng: -74.0060 };
