@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 import { GoogleMap } from '@react-google-maps/api';
 import { Navigation, MapPin } from 'lucide-react';
 import { useSystemStore } from '../store/useSystemStore';
-import { cn } from '../utils/cn';
+import { useSystemStore } from '../store/useSystemStore';
 
 const containerStyle = { width: '100%', height: '100%' };
 const center = { lat: 40.7128, lng: -74.0060 };
-const LIBRARIES: ("visualization" | "places")[] = ['visualization', 'places'];
+
 
 export function SafeRoutePanel() {
   const { isDarkMode } = useSystemStore();
@@ -72,8 +72,8 @@ export function SafeRoutePanel() {
 
         {/* AI Safe Route */}
         <div className="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-green-500/30 rounded-lg shadow-[0_0_30px_rgba(34,197,94,0.15)] flex flex-col overflow-hidden relative">
-          <div className="absolute inset-0 z-0">
-            {isLoaded ? (
+          <div className="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
+            {mapLoaded ? (
               <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={{ lat: 40.7120, lng: -74.0070 }}
@@ -84,7 +84,9 @@ export function SafeRoutePanel() {
                 }}
               />
             ) : (
-              <div className="w-full h-full bg-black/5 dark:bg-white/5" />
+              <div className="w-full h-full flex items-center justify-center bg-black/10">
+                <span className="font-mono text-xs opacity-50 animate-pulse text-white">Initializing Map...</span>
+              </div>
             )}
           </div>
           <div className="absolute inset-0 bg-green-500/5 pointer-events-none z-10" />

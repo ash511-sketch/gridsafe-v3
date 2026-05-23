@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GoogleMap, Polygon, Circle } from '@react-google-maps/api';
+import { GoogleMap, Polygon } from '@react-google-maps/api';
 import { MapPin, Plus, Save, Trash2, Power } from 'lucide-react';
 import { useSystemStore } from '../store/useSystemStore';
 import { cn } from '../utils/cn';
 
 const containerStyle = { width: '100%', height: '100%' };
 const center = { lat: 40.7128, lng: -74.0060 };
-const LIBRARIES: ("visualization" | "places")[] = ['visualization', 'places'];
+
 
 const GEOFENCES = [
   { id: 1, name: 'Safe Zone Alpha', type: 'safe', paths: [{ lat: 40.7150, lng: -74.0080 }, { lat: 40.7150, lng: -74.0020 }, { lat: 40.7110, lng: -74.0020 }, { lat: 40.7110, lng: -74.0080 }], status: 'active' },
