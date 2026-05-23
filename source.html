@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GRIDSAFE V3.2 - AI Urban Intelligence</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gs: {
+                dark: '#18181b', bgdark: '#2c0606', bglight: '#f9f6f0',
+                maroon: '#4a0e0e', crimson: '#8b0000', cream: '#f4f1ea', ivory: '#fcfcfc',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'], mono: ['IBM Plex Mono', 'monospace'], display: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+      * { box-sizing: border-box; }
+      body { overflow-x: hidden; }
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background-color: rgba(139, 0, 0, 0.3); border-radius: 9999px; }
+      ::-webkit-scrollbar-thumb:hover { background-color: rgba(139, 0, 0, 0.6); }
+      @keyframes pulse-red {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+        50% { opacity: 0.6; box-shadow: 0 0 15px 5px rgba(220, 38, 38, 0.1); }
+      }
+      .animate-pulse-red { animation: pulse-red 2s infinite; }
+      .feature-panel { animation: fadeIn 0.3s ease-in-out; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+      
+      .map-bg {
+        background-image: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1000&q=80');
+        background-size: cover; background-position: center;
+        filter: grayscale(100%) brightness(50%) contrast(120%);
+      }
+      
+      @keyframes scrollText {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-100%); }
+      }
+      .animate-scroll-text { animation: scrollText 10s linear infinite; }
+      
+      @keyframes moveDot {
+        0% { transform: translate(0, 0); }
+        25% { transform: translate(50px, -30px); }
+        50% { transform: translate(100px, 10px); }
+        75% { transform: translate(150px, -20px); }
+        100% { transform: translate(200px, 0); }
+      }
+      .animate-move-dot { animation: moveDot 8s linear infinite alternate; }
+    </style>
+  </head>
+  <body class="bg-gs-bglight text-gs-dark dark:bg-gs-bgdark dark:text-white font-sans antialiased transition-colors duration-500 h-screen w-screen overflow-hidden flex selection:bg-gs-crimson selection:text-white relative">
+
+    <aside class="w-20 md:w-64 h-full bg-white/80 dark:bg-black/30 backdrop-blur-xl border-r border-black/5 dark:border-white/10 flex flex-col justify-between py-6 z-20 shrink-0 shadow-xl shadow-black/5 dark:shadow-black/20 transition-all duration-300">
+      <div class="flex-1 overflow-y-auto no-scrollbar">
+        <div class="px-6 flex items-center gap-3 mb-8">
+          <div class="w-8 h-8 bg-gs-crimson rounded flex items-center justify-center animate-pulse-red shrink-0">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="hidden md:block">
+            <h1 class="font-display font-bold text-lg leading-tight tracking-wide whitespace-nowrap">GRID SAFE</h1>
+            <span class="font-mono text-[9px] uppercase tracking-widest opacity-60">System v3.2</span>
+          </div>
+        </div>
+        <nav class="flex flex-col gap-1 px-3">
+          
+          <a href="#" data-target="panel-command" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all bg-gs-maroon/10 text-gs-maroon dark:bg-white/10 dark:text-white font-semibold opacity-100">
+            <i data-lucide="layout-grid" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Command Center</span>
+          </a>
+          <a href="#" data-target="panel-heatmap" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="map" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Live Fear Heatmap</span>
+          </a>
+          <a href="#" data-target="panel-route" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="navigation" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Safe Route AI</span>
+          </a>
+          <a href="#" data-target="panel-report" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="message-square-warning" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Incident Report</span>
+          </a>
+          <a href="#" data-target="panel-shoe" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="footprints" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Smart Shoe Hub</span>
+          </a>
+          <a href="#" data-target="panel-sos" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="radio-receiver" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Emergency SOS</span>
+          </a>
+          <a href="#" data-target="panel-predictive" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="trending-up" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Predictive Analytics</span>
+          </a>
+          <a href="#" data-target="panel-transport" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="train" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Transport Safety</span>
+          </a>
+          <a href="#" data-target="panel-threat" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="shield-alert" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">AI Threat Detection</span>
+          </a>
+          <a href="#" data-target="panel-tracking" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="satellite" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Live Tracking</span>
+          </a>
+          <a href="#" data-target="panel-integrity" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="server" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">System Integrity</span>
+          </a>
+          <a href="#" data-target="panel-planner" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="building-2" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Urban Planner</span>
+          </a>
+          <a href="#" data-target="panel-feed" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="activity" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Threat Feed</span>
+          </a>
+          <a href="#" data-target="panel-assistant" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="bot" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">AI Assistant</span>
+          </a>
+          <a href="#" data-target="panel-tactical" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Tactical Analytics</span>
+          </a>
+          <a href="#" data-target="panel-geofencing" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Geofencing</span>
+          </a>
+          <a href="#" data-target="panel-notifications" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="bell-ring" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Notifications</span>
+          </a>
+          <a href="#" data-target="panel-learning" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="brain" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">Self-Learning AI</span>
+          </a>
+          <a href="#" data-target="panel-iot" class="sidebar-link flex items-center gap-4 px-3 py-2 rounded font-mono text-[10px] uppercase tracking-widest transition-all hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100">
+            <i data-lucide="cpu" class="w-4 h-4 shrink-0"></i>
+            <span class="hidden md:block whitespace-nowrap">ESP32 + IoT</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    
+      <!-- Top Header -->
+      <header class="h-16 bg-white/80 dark:bg-black/30 backdrop-blur-xl border-b border-black/5 dark:border-white/10 flex items-center justify-between px-8 z-10 shrink-0 shadow-xl shadow-black/5 dark:shadow-black/20 transition-all duration-300">
+        <div class="flex items-center gap-4">
+          <h2 id="header-title" class="font-display text-xl dark:text-white text-gs-maroon">Command Center</h2>
+          <span class="inline-flex items-center px-2 py-0.5 font-mono text-[9px] tracking-[0.15em] uppercase rounded-sm border border-transparent bg-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.5)] ml-4"><span class="w-1.5 h-1.5 bg-white rounded-full mr-2 animate-pulse"></span>Live</span>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <button id="theme-toggle" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+            <i data-lucide="sun" id="sun-icon" class="w-5 h-5 hidden"></i>
+            <i data-lucide="moon" id="moon-icon" class="w-5 h-5 block"></i>
+          </button>
+          
+          <div class="relative">
+            <button id="notif-toggle" class="relative p-2 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span class="absolute top-1 right-1 w-2 h-2 bg-gs-crimson rounded-full animate-pulse-red"></span>
+            </button>
+            <div id="notif-menu" class="hidden absolute right-0 mt-2 w-80 bg-white/90 dark:bg-black/90 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden">
+               <div class="p-3 bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-xs font-mono tracking-widest uppercase flex justify-between">
+                  <span>Notifications</span>
+                  <span class="text-gs-crimson">3 New</span>
+               </div>
+               <div class="max-h-64 overflow-y-auto">
+                 <div class="p-4 border-b border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer">
+                   <div class="flex items-center gap-2 mb-1 text-red-500 font-mono text-[10px]"><i data-lucide="alert-triangle" class="w-3 h-3"></i> PANIC BUTTON</div>
+                   <p class="text-sm">Sector 7G: Disturbance reported.</p>
+                 </div>
+                 <div class="p-4 border-b border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer">
+                   <div class="flex items-center gap-2 mb-1 text-amber-500 font-mono text-[10px]"><i data-lucide="radio" class="w-3 h-3"></i> ROUTE WARNING</div>
+                   <p class="text-sm">Unlit street detected on Route B.</p>
+                 </div>
+                 <div class="p-4 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer">
+                   <div class="flex items-center gap-2 mb-1 text-blue-500 font-mono text-[10px]"><i data-lucide="info" class="w-3 h-3"></i> SYSTEM</div>
+                   <p class="text-sm">AI Model Retraining Complete (v3.2)</p>
+                 </div>
+               </div>
+            </div>
+          </div>
+          
+          <div class="relative">
+            <button id="profile-toggle" class="w-8 h-8 rounded bg-gs-maroon/20 dark:bg-white/20 flex items-center justify-center cursor-pointer hover:bg-gs-maroon/30 dark:hover:bg-white/30 transition-colors">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </button>
+            <div id="profile-menu" class="hidden absolute right-0 mt-2 w-64 bg-white/90 dark:bg-black/90 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden">
+               <div class="p-4 border-b border-black/10 dark:border-white/10">
+                 <p class="font-bold text-sm">Admin Access</p>
+                 <p class="text-xs opacity-60 font-mono">ID: AUTH-9021</p>
+               </div>
+               <div class="p-4 border-b border-black/10 dark:border-white/10">
+                 <p class="text-[10px] uppercase tracking-widest font-mono opacity-50 mb-4">Personalization</p>
+                 
+                 <div class="flex items-center justify-between mb-4">
+                   <span class="text-xs flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4"></i> Sound Alerts</span>
+                   <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" value="" class="sr-only peer" checked>
+                     <div class="w-9 h-5 bg-black/20 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                   </label>
+                 </div>
+                 
+                 <div class="flex items-center justify-between mb-4">
+                   <span class="text-xs flex items-center gap-2"><i data-lucide="eye-off" class="w-4 h-4"></i> Stealth Mode</span>
+                   <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" value="" class="sr-only peer">
+                     <div class="w-9 h-5 bg-black/20 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gs-crimson"></div>
+                   </label>
+                 </div>
+                 
+                 <div class="flex items-center justify-between">
+                   <span class="text-xs flex items-center gap-2"><i data-lucide="crosshair" class="w-4 h-4"></i> Auto-Center Map</span>
+                   <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" value="" class="sr-only peer" checked>
+                     <div class="w-9 h-5 bg-black/20 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                   </label>
+                 </div>
+               </div>
+               <div class="py-2">
+                 <a href="#" id="open-settings-btn" class="block px-4 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Advanced Settings</a>
+                 <a href="#" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Secure Logout</a>
+               </div>
+            </div>
+          </div>
+          
+        </div>
+      </header>
+    
+      <!-- Dashboard Panels -->
+      <div class="flex-1 overflow-hidden relative p-4 md:p-8">
+        
+      <section id="panel-command" class="feature-panel block h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-2">
+            <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-6">Grid Status</h3>
+            <div class="h-64 flex items-end gap-2 overflow-x-auto pb-2 border-b border-black/10 dark:border-white/10">
+              <div class="w-12 bg-gs-crimson/20 rounded-t h-20"></div>
+              <div class="w-12 bg-gs-crimson/30 rounded-t h-32"></div>
+              <div class="w-12 bg-gs-crimson/40 rounded-t h-24"></div>
+              <div class="w-12 bg-gs-crimson rounded-t h-48 animate-pulse-red"></div>
+              <div class="w-12 bg-gs-crimson/20 rounded-t h-16"></div>
+              <div class="w-12 bg-gs-crimson/30 rounded-t h-28"></div>
+              <div class="w-12 bg-gs-crimson/50 rounded-t h-40"></div>
+            </div>
+          </div>
+          <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col">
+            <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">Quick Actions</h3>
+            <div class="space-y-4 flex-1">
+               <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all w-full text-left flex justify-between">Trigger Alert <i data-lucide="alert-circle" class="w-4 h-4"></i></button>
+               <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all w-full text-left flex justify-between bg-transparent border border-gs-maroon/20 dark:border-white/20 text-gs-maroon dark:text-white">Dispatch Drone <i data-lucide="navigation" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+      <section id="panel-heatmap" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="max-w-7xl mx-auto h-full flex flex-col">
+          <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex-1 flex flex-col relative overflow-hidden p-0 border-0">
+             <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+             <div class="absolute inset-0 z-10 p-6 pointer-events-none">
+                <h3 class="font-mono text-xs tracking-widest uppercase text-white drop-shadow-md">Live Fear Density</h3>
+             </div>
+             <div id="heat-blob-1" class="absolute top-1/4 left-1/4 w-64 h-64 bg-red-600/40 rounded-full blur-[60px] animate-pulse pointer-events-none z-10 transition-all duration-500"></div>
+             <div id="heat-blob-2" class="absolute bottom-1/3 right-1/4 w-48 h-48 bg-amber-500/30 rounded-full blur-[50px] pointer-events-none z-10 transition-all duration-500"></div>
+             <div class="absolute bottom-6 left-6 z-20 bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 w-72 pointer-events-auto border-black/10">
+                <h4 class="font-mono text-xs tracking-widest mb-3">Zone Analytics</h4>
+                <div class="flex justify-between text-xs mb-2"><span class="opacity-70">High Risk Zones</span> <span class="text-red-500">3 Active</span></div>
+                <div class="flex justify-between text-xs mb-2"><span class="opacity-70">Predicted Night Risk</span> <span class="text-amber-500">Elevated (78%)</span></div>
+             </div>
+          </div>
+        </div>
+      </section>
+    
+      <section id="panel-route" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col overflow-hidden relative p-0 border-0">
+             <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+             <div class="absolute inset-0 bg-red-500/10 pointer-events-none"></div>
+             <div class="absolute inset-0 z-10 p-6 flex flex-col justify-between pointer-events-none">
+                <h3 class="font-mono text-xs tracking-widest uppercase text-white bg-black/50 p-2 rounded inline-block w-max">Standard Route</h3>
+                <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 pointer-events-auto border-red-500/30">
+                  <div class="flex justify-between items-center mb-2"><span class="text-xs opacity-70">Risk Score</span><span class="text-red-500 font-bold">89/100</span></div>
+                  <div class="w-full h-2 bg-black/20 rounded-full overflow-hidden"><div class="w-[89%] h-full bg-red-500"></div></div>
+                </div>
+             </div>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col overflow-hidden relative p-0 border-0 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+             <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+             <div class="absolute inset-0 bg-green-500/5 pointer-events-none"></div>
+             <div class="absolute inset-0 z-10 p-6 flex flex-col justify-between pointer-events-none">
+                <h3 class="font-mono text-xs tracking-widest uppercase text-white bg-black/50 p-2 rounded inline-block w-max">AI Safe Route</h3>
+                <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 pointer-events-auto border-green-500/30">
+                  <div class="flex justify-between items-center mb-2"><span class="text-xs opacity-70">Risk Score</span><span class="text-green-500 font-bold">12/100</span></div>
+                  <div class="w-full h-2 bg-black/20 rounded-full overflow-hidden"><div class="w-[12%] h-full bg-green-500"></div></div>
+                  <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all w-full mt-4 bg-green-700 hover:bg-green-600">Start Navigation</button>
+                </div>
+             </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-report" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-1 flex flex-col">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-6">Submit Anonymous Report</h3>
+              <div class="space-y-4 flex-1">
+                 <select class="w-full p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded font-sans text-sm outline-none">
+                    <option>Harassment</option><option>Unsafe Area</option><option>Stalking</option>
+                 </select>
+                 <textarea rows="4" class="w-full p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded font-sans text-sm outline-none" placeholder="Details..."></textarea>
+                 <div class="flex items-center gap-2 text-xs opacity-70 mb-4"><i data-lucide="map-pin" class="w-4 h-4"></i> Auto Geo-tagging enabled</div>
+                 <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all w-full">Submit Securely</button>
+              </div>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-2 overflow-hidden relative p-0 border-0 flex flex-col">
+              <div class="p-6 border-b border-black/5 dark:border-white/5"><h3 class="font-mono text-xs tracking-widest uppercase opacity-70">Live Report Feed</h3></div>
+              <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                 <div class="p-4 bg-red-500/10 border border-red-500/20 rounded"><span class="text-xs opacity-50 font-mono block mb-1">10 mins ago • Downtown</span><p class="text-sm">Group of men loitering near the metro exit. Poor lighting.</p></div>
+                 <div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded"><span class="text-xs opacity-50 font-mono block mb-1">22 mins ago • Sector 4</span><p class="text-sm">Streetlights have been out for 2 days. Feels unsafe.</p></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-shoe" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col items-center justify-center py-10">
+              <i data-lucide="battery-charging" class="w-10 h-10 text-green-500 mb-4"></i>
+              <span class="font-display text-3xl">87%</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-2">Shoe Battery</span>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col items-center justify-center py-10">
+              <i data-lucide="activity" class="w-10 h-10 text-red-500 mb-4 animate-pulse"></i>
+              <span class="font-display text-3xl">92 BPM</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-2">Live Pulse</span>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col items-center justify-center py-10">
+              <i data-lucide="footprints" class="w-10 h-10 text-blue-500 mb-4"></i>
+              <span class="font-display text-3xl">4.2 km/h</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-2">Walking Speed</span>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col items-center justify-center py-10">
+              <i data-lucide="radio" class="w-10 h-10 text-green-500 mb-4"></i>
+              <span class="font-display text-3xl text-green-500">SYNCED</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-2">BLE Status</span>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-4 p-6">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">Motion Diagnostics (Live)</h3>
+              <div class="h-32 flex items-end gap-1 opacity-80">
+                 <div class="w-full bg-blue-500/20 h-[30%]"></div>
+                 <div class="w-full bg-blue-500/40 h-[40%]"></div>
+                 <div class="w-full bg-blue-500/30 h-[20%]"></div>
+                 <div class="w-full bg-red-500/80 h-[90%] relative"><span class="absolute -top-6 text-[9px] text-red-500 font-mono -left-4">SUDDEN STOP</span></div>
+                 <div class="w-full bg-blue-500/20 h-[10%]"></div>
+                 <div class="w-full bg-blue-500/30 h-[30%]"></div>
+                 <div class="w-full bg-blue-500/20 h-[30%]"></div>
+                 <div class="w-full bg-blue-500/20 h-[30%]"></div>
+                 <div class="w-full bg-blue-500/20 h-[30%]"></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-sos" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="h-full flex items-center justify-center max-w-4xl mx-auto">
+          <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 w-full text-center py-20 flex flex-col items-center">
+             <div class="w-48 h-48 bg-red-600 rounded-full flex items-center justify-center animate-pulse-red cursor-pointer hover:bg-red-700 transition-colors shadow-[0_0_50px_rgba(220,38,38,0.6)] mb-8">
+               <span class="font-display text-5xl text-white font-bold tracking-wider">SOS</span>
+             </div>
+             <h2 class="font-display text-2xl mb-2 text-red-600 dark:text-red-400">EMERGENCY PROTOCOL</h2>
+             <p class="font-mono text-xs opacity-60 max-w-md mx-auto mb-8">Clicking the button above will instantly alert emergency contacts, stream live location, and notify local authorities.</p>
+             <div class="flex gap-4">
+                <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all">Configure Contacts</button>
+                <button class="px-5 py-2 bg-gs-maroon dark:bg-gs-crimson text-white font-mono text-[10px] tracking-widest uppercase hover:bg-gs-crimson dark:hover:bg-red-700 rounded shadow-lg shadow-gs-maroon/20 transition-all bg-transparent border border-gs-maroon/20 text-gs-maroon dark:text-white">Test Signal</button>
+             </div>
+          </div>
+        </div>
+      </section>
+    
+      <section id="panel-predictive" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="max-w-7xl mx-auto h-full space-y-6">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 h-64 flex flex-col">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">Predicted Fear Density (24h)</h3>
+              <div class="flex-1 flex items-end gap-1 opacity-80 border-b border-black/10 dark:border-white/10 pb-2">
+                 <div class="flex-1 bg-gs-crimson/45 rounded-t" style="height: 59.73361674917146%"></div><div class="flex-1 bg-gs-crimson/55 rounded-t" style="height: 59.78984742685%"></div><div class="flex-1 bg-gs-crimson/49 rounded-t" style="height: 21.864685524766372%"></div><div class="flex-1 bg-gs-crimson/54 rounded-t" style="height: 85.80930741135253%"></div><div class="flex-1 bg-gs-crimson/57 rounded-t" style="height: 30.779699050920996%"></div><div class="flex-1 bg-gs-crimson/58 rounded-t" style="height: 70.77263316751396%"></div><div class="flex-1 bg-gs-crimson/57 rounded-t" style="height: 19.84484839109461%"></div><div class="flex-1 bg-gs-crimson/11 rounded-t" style="height: 86.40180514728874%"></div><div class="flex-1 bg-gs-crimson/40 rounded-t" style="height: 36.768429101862274%"></div><div class="flex-1 bg-gs-crimson/49 rounded-t" style="height: 35.409982262652726%"></div><div class="flex-1 bg-gs-crimson/27 rounded-t" style="height: 89.49038481920871%"></div><div class="flex-1 bg-gs-crimson/27 rounded-t" style="height: 22.078824506018222%"></div><div class="flex-1 bg-gs-crimson/43 rounded-t" style="height: 85.8796738204792%"></div><div class="flex-1 bg-gs-crimson/35 rounded-t" style="height: 32.73241266580085%"></div><div class="flex-1 bg-gs-crimson/17 rounded-t" style="height: 74.08570910929883%"></div><div class="flex-1 bg-gs-crimson/60 rounded-t" style="height: 66.20920661992683%"></div><div class="flex-1 bg-gs-crimson/57 rounded-t" style="height: 61.24581223996795%"></div><div class="flex-1 bg-gs-crimson/50 rounded-t" style="height: 17.17867368433442%"></div><div class="flex-1 bg-gs-crimson/37 rounded-t" style="height: 65.50623106165897%"></div><div class="flex-1 bg-gs-crimson/52 rounded-t" style="height: 14.436306085563126%"></div><div class="flex-1 bg-gs-crimson/22 rounded-t" style="height: 43.92238969806538%"></div><div class="flex-1 bg-gs-crimson/14 rounded-t" style="height: 48.29060565832773%"></div><div class="flex-1 bg-gs-crimson/51 rounded-t" style="height: 46.98214304952241%"></div><div class="flex-1 bg-gs-crimson/37 rounded-t" style="height: 78.23292876584559%"></div>
+              </div>
+              <div class="flex justify-between text-[9px] font-mono opacity-50 mt-2"><span>00:00</span><span>12:00</span><span>23:59</span></div>
+           </div>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center"><h4 class="text-xs opacity-70 mb-2 uppercase tracking-widest">High-Risk Time</h4><span class="font-display text-3xl text-red-500">22:00 - 02:00</span></div>
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center"><h4 class="text-xs opacity-70 mb-2 uppercase tracking-widest">Trending Threat</h4><span class="font-display text-3xl text-amber-500">Transport</span></div>
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center"><h4 class="text-xs opacity-70 mb-2 uppercase tracking-widest">AI Accuracy</h4><span class="font-display text-3xl text-green-500">94.2%</span></div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-transport" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto h-full">
+           
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex items-center p-8">
+              <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mr-6">
+                 <i data-lucide="bus" class="w-8 h-8 text-red-500"></i>
+              </div>
+              <div class="flex-1">
+                 <h3 class="text-xl font-display mb-1">Bus Route 42</h3>
+                 <div class="flex justify-between text-xs mb-2"><span class="font-mono text-red-500 tracking-widest">UNSAFE</span> <span class="opacity-70">Safety Score: 32/100</span></div>
+                 <div class="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500" style="width: 32%"></div></div>
+              </div>
+           </div>
+           
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex items-center p-8">
+              <div class="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mr-6">
+                 <i data-lucide="train" class="w-8 h-8 text-green-500"></i>
+              </div>
+              <div class="flex-1">
+                 <h3 class="text-xl font-display mb-1">Metro Red Line</h3>
+                 <div class="flex justify-between text-xs mb-2"><span class="font-mono text-green-500 tracking-widest">SAFE</span> <span class="opacity-70">Safety Score: 88/100</span></div>
+                 <div class="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-green-500" style="width: 88%"></div></div>
+              </div>
+           </div>
+           
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex items-center p-8">
+              <div class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mr-6">
+                 <i data-lucide="car" class="w-8 h-8 text-amber-500"></i>
+              </div>
+              <div class="flex-1">
+                 <h3 class="text-xl font-display mb-1">City Taxis (Night)</h3>
+                 <div class="flex justify-between text-xs mb-2"><span class="font-mono text-amber-500 tracking-widest">ELEVATED</span> <span class="opacity-70">Safety Score: 45/100</span></div>
+                 <div class="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500" style="width: 45%"></div></div>
+              </div>
+           </div>
+           
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex items-center p-8">
+              <div class="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center mr-6">
+                 <i data-lucide="navigation" class="w-8 h-8 text-yellow-500"></i>
+              </div>
+              <div class="flex-1">
+                 <h3 class="text-xl font-display mb-1">Auto Rickshaws</h3>
+                 <div class="flex justify-between text-xs mb-2"><span class="font-mono text-yellow-500 tracking-widest">MODERATE</span> <span class="opacity-70">Safety Score: 62/100</span></div>
+                 <div class="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-yellow-500" style="width: 62%"></div></div>
+              </div>
+           </div>
+           
+        </div>
+      </section>
+    
+      <section id="panel-threat" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-7xl mx-auto h-[80vh] flex flex-col p-0 overflow-hidden relative">
+           <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555589943-772c21dcfa1d?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-60 grayscale mix-blend-luminosity"></div>
+           <div class="absolute inset-0 bg-black/40"></div>
+           <div class="absolute top-1/3 left-1/4 w-32 h-48 border-2 border-red-500 bg-red-500/10 pointer-events-none">
+              <span class="bg-red-500 text-white text-[9px] font-mono px-1 absolute -top-4 -left-0.5">ANOMALY: 89%</span>
+           </div>
+           <div class="absolute top-1/2 right-1/3 w-20 h-20 border-2 border-green-500 bg-green-500/10 pointer-events-none">
+              <span class="bg-green-500 text-white text-[9px] font-mono px-1 absolute -top-4 -left-0.5">SAFE: 99%</span>
+           </div>
+           
+           <div class="absolute bottom-0 w-full h-1/3 bg-black/80 backdrop-blur-md p-6 border-t border-white/10 font-mono text-xs overflow-y-auto text-green-400">
+              <p>> [06:12:01] Scanning Sector 7G feeds...</p>
+              <p>> [06:12:05] Object tracked: 4 pedestrians. Pattern: Normal.</p>
+              <p class="text-red-500">> [06:12:18] WARNING: Aggressive motion signature detected (Confidence: 89%).</p>
+              <p>> [06:12:19] Isolating subject. Cross-referencing database.</p>
+              <p class="text-yellow-500">> [06:12:20] Auto-flagging for human review. Generating incident report.</p>
+              <span class="animate-pulse">_</span>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-tracking" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-7xl mx-auto h-[80vh] flex flex-col p-0 overflow-hidden relative">
+           <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+           
+           <!-- Simulated moving dot -->
+           <div id="target-alpha-dot" class="absolute top-1/2 left-1/4 z-20 animate-move-dot">
+              <div class="w-4 h-4 bg-gs-crimson rounded-full animate-pulse-red shadow-[0_0_20px_rgba(220,38,38,1)]"></div>
+              <div class="mt-2 bg-black/80 text-white text-[9px] font-mono px-2 py-1 rounded w-max border border-white/20">TARGET_ALPHA<br>Speed: <span id="target-alpha-speed">4.2</span> km/h</div>
+           </div>
+           
+           <div class="absolute top-6 right-6 z-30 bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 w-64">
+              <h4 class="font-mono text-xs tracking-widest mb-4 opacity-70">Live Metrics</h4>
+              <div class="space-y-3 font-mono text-sm">
+                 <div class="flex justify-between"><span>Status:</span> <span class="text-green-500">TRACKING</span></div>
+                 <div class="flex justify-between"><span>Satellites:</span> <span>12</span></div>
+                 <div class="flex justify-between"><span>Latency:</span> <span>42ms</span></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-integrity" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="max-w-7xl mx-auto h-full space-y-6">
+           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center py-6 border-t-4 border-t-green-500">
+                 <h4 class="font-mono text-xs uppercase opacity-70 mb-2">Main Node</h4>
+                 <span class="text-green-500 font-bold tracking-widest">ONLINE</span>
+              </div>
+              
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center py-6 border-t-4 border-t-green-500">
+                 <h4 class="font-mono text-xs uppercase opacity-70 mb-2">AI Engine</h4>
+                 <span class="text-green-500 font-bold tracking-widest">ONLINE</span>
+              </div>
+              
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center py-6 border-t-4 border-t-green-500">
+                 <h4 class="font-mono text-xs uppercase opacity-70 mb-2">Database</h4>
+                 <span class="text-green-500 font-bold tracking-widest">ONLINE</span>
+              </div>
+              
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 text-center py-6 border-t-4 border-t-green-500">
+                 <h4 class="font-mono text-xs uppercase opacity-70 mb-2">WebSocket</h4>
+                 <span class="text-green-500 font-bold tracking-widest">ONLINE</span>
+              </div>
+              
+           </div>
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6">
+                 <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">CPU Load Simulation</h3>
+                 <div class="space-y-2">
+                    <div class="w-full bg-black/10 dark:bg-white/10 h-4 rounded overflow-hidden"><div class="w-[45%] h-full bg-blue-500"></div></div>
+                    <div class="w-full bg-black/10 dark:bg-white/10 h-4 rounded overflow-hidden"><div class="w-[60%] h-full bg-blue-500"></div></div>
+                    <div class="w-full bg-black/10 dark:bg-white/10 h-4 rounded overflow-hidden"><div class="w-[30%] h-full bg-blue-500"></div></div>
+                 </div>
+              </div>
+              <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6">
+                 <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">Network Latency (ms)</h3>
+                 <div class="h-20 flex items-end gap-1">
+                    <div class="flex-1 bg-green-500/50 rounded-t" style="height: 17.225021458844484%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 35.59321370352886%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 37.48645205016645%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 35.855124913431794%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 23.791150797805415%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 27.49646151807164%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 26.093509481913443%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 38.49037027492798%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 36.85102804677679%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 21.383275265576707%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 10.327120518106788%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 34.99521868263915%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 18.126015330323927%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 22.352613119306206%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 25.210802600977516%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 37.805534683412844%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 14.053474402471654%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 25.51328770890349%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 22.906917754980185%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 38.80350991431865%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 19.915192641234817%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 35.426649363025135%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 35.85880630833738%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 17.979987565672417%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 39.660337199329085%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 28.14254810772667%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 11.053204897838121%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 19.25486873130116%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 22.69746720380556%"></div><div class="flex-1 bg-green-500/50 rounded-t" style="height: 14.669994192351652%"></div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-planner" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 p-0 overflow-hidden relative">
+              <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+              <div class="absolute inset-0 bg-blue-500/10 pointer-events-none"></div>
+              <div class="absolute top-1/4 left-1/3 w-32 h-32 bg-yellow-400/30 rounded-full blur-xl absolute"></div>
+              <div class="absolute bottom-1/4 right-1/3 w-40 h-40 bg-purple-500/30 rounded-full blur-xl absolute"></div>
+              <div class="absolute z-10 bottom-4 left-4 bg-black/80 text-white text-[9px] font-mono p-2 rounded">
+                 Yellow: Poor Lighting<br>Purple: Infrastructure Decay
+              </div>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col justify-center items-center">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-8">Incident Demographics</h3>
+              <div class="w-48 h-48 rounded-full mb-8" style="background: conic-gradient(#ef4444 0% 45%, #f59e0b 45% 75%, #3b82f6 75% 100%);"></div>
+              <div class="w-full max-w-xs space-y-2 text-sm font-mono">
+                 <div class="flex justify-between"><span class="text-red-500">■ Unlit Streets</span><span>45%</span></div>
+                 <div class="flex justify-between"><span class="text-amber-500">■ Missing Patrols</span><span>30%</span></div>
+                 <div class="flex justify-between"><span class="text-blue-500">■ Blind Spots</span><span>25%</span></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-feed" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-4xl mx-auto h-[80vh] flex flex-col">
+           <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-6 border-b border-black/10 dark:border-white/10 pb-4">Global Threat Feed</h3>
+           <div class="flex-1 overflow-y-auto space-y-3 pr-2">
+              <div class="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                    <span class="text-[10px] font-mono text-red-500 mb-1 block">PANIC | 00:14:22</span>
+                    <p class="text-sm">Automated system log entry #8094. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded">
+                    <span class="text-[10px] font-mono text-amber-500 mb-1 block">WARNING | 01:14:22</span>
+                    <p class="text-sm">Automated system log entry #8095. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
+                    <span class="text-[10px] font-mono text-blue-500 mb-1 block">INFO | 02:14:22</span>
+                    <p class="text-sm">Automated system log entry #8096. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                    <span class="text-[10px] font-mono text-red-500 mb-1 block">PANIC | 03:14:22</span>
+                    <p class="text-sm">Automated system log entry #8097. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded">
+                    <span class="text-[10px] font-mono text-amber-500 mb-1 block">WARNING | 04:14:22</span>
+                    <p class="text-sm">Automated system log entry #8098. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
+                    <span class="text-[10px] font-mono text-blue-500 mb-1 block">INFO | 05:14:22</span>
+                    <p class="text-sm">Automated system log entry #8099. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                    <span class="text-[10px] font-mono text-red-500 mb-1 block">PANIC | 06:14:22</span>
+                    <p class="text-sm">Automated system log entry #8100. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded">
+                    <span class="text-[10px] font-mono text-amber-500 mb-1 block">WARNING | 07:14:22</span>
+                    <p class="text-sm">Automated system log entry #8101. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
+                    <span class="text-[10px] font-mono text-blue-500 mb-1 block">INFO | 08:14:22</span>
+                    <p class="text-sm">Automated system log entry #8102. Potential anomaly detected.</p>
+                 </div><div class="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                    <span class="text-[10px] font-mono text-red-500 mb-1 block">PANIC | 09:14:22</span>
+                    <p class="text-sm">Automated system log entry #8103. Potential anomaly detected.</p>
+                 </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-assistant" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-3xl mx-auto h-[80vh] flex flex-col">
+           <div class="border-b border-black/10 dark:border-white/10 pb-4 flex items-center gap-4">
+              <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center"><i data-lucide="bot" class="w-5 h-5 text-blue-500"></i></div>
+              <div><h3 class="font-bold">GridSafe AI</h3><span class="text-[10px] font-mono text-green-500">ONLINE</span></div>
+           </div>
+           <div class="flex-1 overflow-y-auto py-6 space-y-6">
+              <div class="flex gap-4">
+                 <div class="w-8 h-8 bg-gs-maroon/20 rounded-full shrink-0"></div>
+                 <div class="bg-black/5 dark:bg-white/5 p-3 rounded-lg rounded-tl-none text-sm">What is the safest route to Sector 4?</div>
+              </div>
+              <div class="flex gap-4 flex-row-reverse">
+                 <div class="w-8 h-8 bg-blue-500/20 rounded-full shrink-0 flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-blue-500"></i></div>
+                 <div class="bg-blue-500/10 border border-blue-500/20 p-3 rounded-lg rounded-tr-none text-sm">Analyzing real-time data... The standard route has a 45% risk score due to poor lighting. I recommend taking the alternative path via Main Street. Risk score: 12%.</div>
+              </div>
+           </div>
+           <div class="mt-4 relative">
+              <input type="text" class="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full py-3 px-6 text-sm outline-none" placeholder="Ask AI Assistant...">
+              <button class="absolute right-2 top-2 w-8 h-8 bg-gs-crimson rounded-full flex items-center justify-center"><i data-lucide="send" class="w-4 h-4 text-white"></i></button>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-tactical" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6"><h4 class="text-xs opacity-70 mb-2 uppercase font-mono">Weekly Interventions</h4><span class="font-display text-4xl">142</span></div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6"><h4 class="text-xs opacity-70 mb-2 uppercase font-mono">Avg Response Time</h4><span class="font-display text-4xl text-green-500">1.2m</span></div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6"><h4 class="text-xs opacity-70 mb-2 uppercase font-mono">Active Drones</h4><span class="font-display text-4xl text-blue-500">8</span></div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-3 h-64 flex flex-col">
+              <h4 class="text-xs opacity-70 mb-4 uppercase font-mono">Incident Frequency (Last 30 Days)</h4>
+              <div class="flex-1 flex items-end gap-1 opacity-70">
+                 <div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 24.67591663668791%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 46.07653120046999%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 69.26729083534788%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 17.75672756194573%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 38.53015893113091%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 74.0782218643884%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 56.54691706243395%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 58.08654547196866%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 83.37158113175684%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 15.152334099031544%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 42.704835611296765%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 84.09401497846075%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 49.14910290283791%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 48.24681200969351%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 44.19330039267009%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 84.34156398936432%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 20.889107076167246%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 61.02201865892993%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 30.560166848557042%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 60.217201793311986%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 75.37277401572166%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 79.10554575325777%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 17.270680492220656%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 64.65746300300825%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 56.351730150678556%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 45.92355043638093%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 18.986758977155453%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 75.48866032231275%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 43.74669695921588%"></div><div class="flex-1 bg-white/20 rounded-t hover:bg-gs-crimson transition-colors" style="height: 42.46612420442411%"></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-geofencing" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 lg:col-span-2 overflow-hidden relative p-0 border-0">
+              <iframe src="https://maps.google.com/maps?q=Manhattan&t=&z=14&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" style="filter: invert(90%) hue-rotate(180deg) brightness(80%) contrast(120%); pointer-events: none; opacity: 0.5;"></iframe>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                 <div class="w-96 h-96 border-4 border-blue-500/50 bg-blue-500/10 rounded-full relative">
+                    <div class="absolute inset-0 border border-blue-400/30 rounded-full animate-ping opacity-20"></div>
+                 </div>
+              </div>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70 mb-4">Geofence Logs</h3>
+              <div class="flex-1 overflow-y-auto space-y-3 text-xs font-mono">
+                 <div class="p-2 border-l-2 border-red-500 bg-red-500/5">EXIT: User 492 left Safe Zone</div>
+                 <div class="p-2 border-l-2 border-green-500 bg-green-500/5">ENTRY: User 112 entered Safe Zone</div>
+                 <div class="p-2 border-l-2 border-green-500 bg-green-500/5">ENTRY: User 843 entered Safe Zone</div>
+                 <div class="p-2 border-l-2 border-red-500 bg-red-500/5">EXIT: User 092 left Safe Zone</div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-notifications" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-4xl mx-auto h-[80vh] flex flex-col">
+           <div class="flex justify-between items-center border-b border-black/10 dark:border-white/10 pb-4 mb-4">
+              <h3 class="font-mono text-xs tracking-widest uppercase opacity-70">Notification Center</h3>
+              <button class="text-[10px] uppercase font-mono tracking-widest text-gs-crimson hover:underline">Mark all as read</button>
+           </div>
+           <div class="flex-1 overflow-y-auto space-y-2 pr-2">
+              
+              <div class="p-4 bg-gs-maroon/5 dark:bg-white/5 border-l-2 border-gs-crimson rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 1</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">0h ago</span>
+              </div>
+              <div class="p-4 bg-gs-maroon/5 dark:bg-white/5 border-l-2 border-gs-crimson rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 2</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">2h ago</span>
+              </div>
+              <div class="p-4 bg-gs-maroon/5 dark:bg-white/5 border-l-2 border-gs-crimson rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 3</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">4h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 4</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">6h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 5</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">8h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 6</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">10h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 7</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">12h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 8</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">14h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 9</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">16h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 10</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">18h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 11</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">20h ago</span>
+              </div>
+              <div class="p-4 border border-black/5 dark:border-white/5 rounded flex items-start gap-4">
+                 <div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-4 h-4 opacity-50"></i></div>
+                 <div>
+                    <h4 class="text-sm font-bold mb-1">System Update 12</h4>
+                    <p class="text-xs opacity-70">Routine diagnostic scan completed with 0 errors found.</p>
+                 </div>
+                 <span class="ml-auto text-[9px] font-mono opacity-40 whitespace-nowrap">22h ago</span>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-learning" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto h-full">
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+              <h3 class="absolute top-6 left-6 font-mono text-xs tracking-widest uppercase opacity-70">Neural Net Vis</h3>
+              <div class="w-full h-full flex flex-col justify-around opacity-50">
+                 <!-- Mock Neural Net lines -->
+                 <div class="h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent w-full animate-pulse"></div>
+                 <div class="h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent w-full animate-pulse delay-75"></div>
+                 <div class="h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent w-full animate-pulse delay-150"></div>
+                 <div class="h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent w-full animate-pulse delay-300"></div>
+              </div>
+           </div>
+           <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 flex flex-col justify-center space-y-8">
+              <div>
+                 <div class="flex justify-between text-xs mb-2 font-mono"><span class="opacity-70">Prediction Accuracy</span><span class="text-green-500">96.4%</span></div>
+                 <div class="w-full h-2 bg-black/10 dark:bg-white/10 rounded-full"><div class="w-[96%] h-full bg-green-500 rounded-full"></div></div>
+              </div>
+              <div>
+                 <div class="flex justify-between text-xs mb-2 font-mono"><span class="opacity-70">False Positive Rate</span><span class="text-blue-500">2.1%</span></div>
+                 <div class="w-full h-2 bg-black/10 dark:bg-white/10 rounded-full"><div class="w-[2%] h-full bg-blue-500 rounded-full"></div></div>
+              </div>
+              <div>
+                 <div class="flex justify-between text-xs mb-2 font-mono"><span class="opacity-70">Model Retraining Progress</span><span class="text-amber-500">In Progress</span></div>
+                 <div class="w-full h-2 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden"><div class="w-1/3 h-full bg-amber-500 rounded-full animate-pulse"></div></div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      <section id="panel-iot" class="feature-panel hidden h-full overflow-y-auto pb-10">
+         
+        <div class="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl shadow-black/5 dark:shadow-black/20 p-6 max-w-5xl mx-auto h-[80vh] flex flex-col p-0 overflow-hidden bg-[#0a0a0a] border-green-500/30">
+           <div class="bg-black/50 p-3 border-b border-green-500/20 flex justify-between items-center text-green-500 font-mono text-xs">
+              <span>ESP32_CLUSTER_RAW_FEED</span>
+              <span class="animate-pulse">● LIVE</span>
+           </div>
+           <div class="flex-1 p-6 font-mono text-[10px] md:text-xs text-green-400 overflow-hidden relative">
+              <div class="absolute inset-0 p-6 flex flex-col justify-end space-y-1">
+                 <div class="opacity-50">Initializing serial port /dev/ttyUSB0... OK</div>
+                 <div class="opacity-50">Baud rate: 115200</div>
+                 <div class="animate-scroll-text h-[200%] flex flex-col justify-end space-y-1">
+                    <div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_9","accel":[0.89,0.40,0.01],"batt":90}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_15","accel":[0.36,0.96,0.32],"batt":87}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_52","accel":[0.44,0.95,0.26],"batt":82}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_52","accel":[0.94,0.97,0.56],"batt":92}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_85","accel":[0.63,0.75,0.36],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_0","accel":[0.93,0.82,1.00],"batt":88}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_63","accel":[0.96,0.54,0.49],"batt":90}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_98","accel":[0.40,0.02,0.91],"batt":94}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_4","accel":[0.46,0.51,0.89],"batt":92}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_80","accel":[0.63,0.80,0.69],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_25","accel":[0.25,0.63,0.60],"batt":99}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_78","accel":[0.26,0.07,0.32],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_88","accel":[0.98,0.82,0.86],"batt":95}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_84","accel":[0.01,0.69,0.78],"batt":96}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_26","accel":[0.38,0.90,0.79],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_88","accel":[0.32,0.26,0.81],"batt":84}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_12","accel":[0.20,0.71,0.01],"batt":89}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_34","accel":[0.53,0.28,0.61],"batt":85}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_78","accel":[0.49,0.26,0.43],"batt":99}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_17","accel":[0.90,0.95,1.00],"batt":93}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_60","accel":[0.41,0.77,0.41],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_82","accel":[0.36,0.46,0.82],"batt":86}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_0","accel":[0.84,0.39,0.62],"batt":90}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_56","accel":[0.04,0.48,0.37],"batt":87}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_20","accel":[0.38,0.74,0.71],"batt":81}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_26","accel":[0.91,0.13,0.89],"batt":96}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_56","accel":[0.86,0.15,0.18],"batt":93}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_27","accel":[0.10,0.51,0.51],"batt":81}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_60","accel":[0.16,0.33,0.54],"batt":84}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_63","accel":[0.37,0.90,0.56],"batt":95}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_51","accel":[0.33,0.36,0.02],"batt":95}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_12","accel":[0.17,0.83,0.62],"batt":98}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_33","accel":[0.54,0.91,0.37],"batt":80}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_32","accel":[0.43,0.37,0.96],"batt":97}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_44","accel":[0.76,0.74,0.57],"batt":86}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_4","accel":[0.22,0.38,0.77],"batt":82}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_66","accel":[0.60,0.69,0.39],"batt":96}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_92","accel":[0.26,0.24,0.70],"batt":97}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_87","accel":[0.12,0.99,0.69],"batt":95}</div><div>[2026-05-23T01:21:57.111Z] RECV: {"id":"ESP_40","accel":[0.50,0.23,0.25],"batt":97}</div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+    
+      </div>
+      
+      <!-- Settings Modal -->
+      <div id="settings-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-gs-bgdark border border-black/10 dark:border-white/10 w-11/12 max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn">
+          <!-- Header -->
+          <div class="flex justify-between items-center p-4 border-b border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+             <h3 class="font-display text-lg text-gs-crimson dark:text-red-400 font-bold flex items-center gap-2"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i> Advanced Configurations</h3>
+             <button id="close-settings-btn" class="hover:text-red-500 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+          </div>
+          
+          <!-- Body -->
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[70vh] overflow-y-auto">
+             
+             <!-- Software Settings -->
+             <div>
+               <h4 class="font-mono text-xs uppercase tracking-widest text-blue-500 mb-6 flex items-center gap-2 border-b border-blue-500/20 pb-2"><i data-lucide="cpu" class="w-4 h-4"></i> Software</h4>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">AI Threat Sensitivity</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(Sets how easily the AI gets triggered when it spots something suspicious)</span>
+                 <input type="range" min="1" max="100" value="85" class="w-full accent-blue-500">
+               </div>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">Predictive Horizon</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(How many hours ahead you want the AI to predict safe vs unsafe areas)</span>
+                 <select class="w-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 rounded p-2 text-xs outline-none">
+                   <option>12 Hours</option>
+                   <option selected>24 Hours</option>
+                   <option>48 Hours</option>
+                 </select>
+               </div>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">Map Heat Overlay</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(Change how bright the danger zones look on your map)</span>
+                 <div class="flex gap-2 text-xs">
+                    <button id="heat-low" class="px-3 py-1 bg-black/5 dark:bg-white/10 rounded hover:bg-blue-500 hover:text-white transition-colors heat-btn">Low</button>
+                    <button id="heat-high" class="px-3 py-1 bg-blue-500 text-white rounded shadow-lg shadow-blue-500/20 heat-btn transition-colors">High</button>
+                    <button id="heat-extreme" class="px-3 py-1 bg-black/5 dark:bg-white/10 rounded hover:bg-blue-500 hover:text-white transition-colors heat-btn">Extreme</button>
+                 </div>
+               </div>
+
+             </div>
+             
+             <!-- Hardware Settings -->
+             <div>
+               <h4 class="font-mono text-xs uppercase tracking-widest text-green-500 mb-6 flex items-center gap-2 border-b border-green-500/20 pb-2"><i data-lucide="microchip" class="w-4 h-4"></i> Hardware</h4>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">ESP32 Telemetry Rate</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(How often your shoes send location updates to the app)</span>
+                 <select class="w-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 rounded p-2 text-xs outline-none">
+                   <option>100ms (High Drain)</option>
+                   <option selected>500ms (Balanced)</option>
+                   <option>2000ms (Power Save)</option>
+                 </select>
+               </div>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">Smart Shoe Fall Detection</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(Automatically send an SOS if your shoe senses that you have fallen down)</span>
+                 <label class="relative inline-flex items-center cursor-pointer mt-1">
+                   <input type="checkbox" value="" class="sr-only peer" checked>
+                   <div class="w-9 h-5 bg-black/20 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                 </label>
+               </div>
+               
+               <div class="mb-6">
+                 <label class="text-sm font-bold block mb-1">Camera FPS Limit</label>
+                 <span class="text-[10px] opacity-60 font-mono block mb-2 leading-tight">(Change the video quality of live street cameras)</span>
+                 <input type="range" min="5" max="60" value="30" class="w-full accent-green-500">
+               </div>
+             </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      lucide.createIcons();
+
+      // Theme Toggling Logic
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const sunIcon = document.getElementById('sun-icon');
+      const moonIcon = document.getElementById('moon-icon');
+      const htmlElement = document.documentElement;
+
+      if (localStorage.getItem('theme') === 'light') {
+        htmlElement.classList.remove('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      } else {
+        htmlElement.classList.add('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      }
+
+      themeToggleBtn.addEventListener('click', () => {
+        if (htmlElement.classList.contains('dark')) {
+          htmlElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+          sunIcon.classList.add('hidden');
+          moonIcon.classList.remove('hidden');
+        } else {
+          htmlElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+          sunIcon.classList.remove('hidden');
+          moonIcon.classList.add('hidden');
+        }
+      });
+
+      // Dropdown Logic
+      const notifBtn = document.getElementById('notif-toggle');
+      const notifMenu = document.getElementById('notif-menu');
+      const profileBtn = document.getElementById('profile-toggle');
+      const profileMenu = document.getElementById('profile-menu');
+
+      notifBtn.addEventListener('click', (e) => {
+         e.stopPropagation();
+         notifMenu.classList.toggle('hidden');
+         profileMenu.classList.add('hidden');
+      });
+
+      profileBtn.addEventListener('click', (e) => {
+         e.stopPropagation();
+         profileMenu.classList.toggle('hidden');
+         notifMenu.classList.add('hidden');
+      });
+
+      document.addEventListener('click', () => {
+         notifMenu.classList.add('hidden');
+         profileMenu.classList.add('hidden');
+      });
+
+      notifMenu.addEventListener('click', e => e.stopPropagation());
+      profileMenu.addEventListener('click', e => e.stopPropagation());
+
+      // Settings Modal Logic
+      const settingsBtn = document.getElementById('open-settings-btn');
+      const settingsModal = document.getElementById('settings-modal');
+      const closeSettingsBtn = document.getElementById('close-settings-btn');
+      
+      settingsBtn.addEventListener('click', (e) => {
+         e.preventDefault();
+         profileMenu.classList.add('hidden'); // Close profile dropdown
+         settingsModal.classList.remove('hidden'); // Open modal
+      });
+      
+      closeSettingsBtn.addEventListener('click', () => {
+         settingsModal.classList.add('hidden');
+      });
+      
+      settingsModal.addEventListener('click', (e) => {
+         if (e.target === settingsModal) {
+            settingsModal.classList.add('hidden');
+         }
+      });
+      
+      // Heatmap Overlay Logic
+      const blob1 = document.getElementById('heat-blob-1');
+      const blob2 = document.getElementById('heat-blob-2');
+      const heatBtns = document.querySelectorAll('.heat-btn');
+
+      document.getElementById('heat-low')?.addEventListener('click', () => {
+          if(blob1) blob1.className = "absolute top-1/4 left-1/4 w-32 h-32 bg-red-600/20 rounded-full blur-[40px] pointer-events-none z-10 transition-all duration-500";
+          if(blob2) blob2.className = "absolute bottom-1/3 right-1/4 w-24 h-24 bg-amber-500/10 rounded-full blur-[30px] pointer-events-none z-10 transition-all duration-500";
+          updateHeatBtns('heat-low');
+      });
+      document.getElementById('heat-high')?.addEventListener('click', () => {
+          if(blob1) blob1.className = "absolute top-1/4 left-1/4 w-64 h-64 bg-red-600/40 rounded-full blur-[60px] animate-pulse pointer-events-none z-10 transition-all duration-500";
+          if(blob2) blob2.className = "absolute bottom-1/3 right-1/4 w-48 h-48 bg-amber-500/30 rounded-full blur-[50px] pointer-events-none z-10 transition-all duration-500";
+          updateHeatBtns('heat-high');
+      });
+      document.getElementById('heat-extreme')?.addEventListener('click', () => {
+          if(blob1) blob1.className = "absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/70 rounded-full blur-[80px] animate-pulse pointer-events-none z-10 transition-all duration-500";
+          if(blob2) blob2.className = "absolute bottom-1/3 right-1/4 w-80 h-80 bg-red-500/50 rounded-full blur-[60px] pointer-events-none z-10 transition-all duration-500";
+          updateHeatBtns('heat-extreme');
+      });
+      function updateHeatBtns(activeId) {
+          heatBtns.forEach(b => {
+              if(b.id === activeId) {
+                  b.className = "px-3 py-1 bg-blue-500 text-white rounded shadow-lg shadow-blue-500/20 heat-btn transition-colors";
+              } else {
+                  b.className = "px-3 py-1 bg-black/5 dark:bg-white/10 rounded hover:bg-blue-500 hover:text-white transition-colors heat-btn";
+              }
+          });
+      }
+
+      // Tab Switching Logic
+      const links = document.querySelectorAll('.sidebar-link');
+      const panels = document.querySelectorAll('.feature-panel');
+      const headerTitle = document.getElementById('header-title');
+
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('data-target');
+          
+          // Hide all panels
+          panels.forEach(p => p.classList.add('hidden'));
+          panels.forEach(p => p.classList.remove('block'));
+          
+          // Show target panel
+          const targetPanel = document.getElementById(targetId);
+          if (targetPanel) {
+             targetPanel.classList.remove('hidden');
+             targetPanel.classList.add('block');
+          }
+
+          // Update active link styling
+          links.forEach(l => {
+             l.classList.remove('bg-gs-maroon/10', 'text-gs-maroon', 'dark:bg-white/10', 'dark:text-white', 'font-semibold', 'opacity-100');
+             l.classList.add('hover:bg-black/5', 'dark:hover:bg-white/5', 'opacity-70', 'hover:opacity-100');
+          });
+          link.classList.remove('hover:bg-black/5', 'dark:hover:bg-white/5', 'opacity-70', 'hover:opacity-100');
+          link.classList.add('bg-gs-maroon/10', 'text-gs-maroon', 'dark:bg-white/10', 'dark:text-white', 'font-semibold', 'opacity-100');
+          
+          // Update Header Title
+          const title = link.querySelector('span').innerText;
+          headerTitle.innerText = title;
+        });
+      });
+
+      // Target Alpha Dynamic Speed Logic
+      const targetDot = document.getElementById('target-alpha-dot');
+      const targetSpeed = document.getElementById('target-alpha-speed');
+      if (targetDot && targetSpeed) {
+         setInterval(() => {
+            // Random speed between 0 and 12 km/h
+            let newSpeed = (Math.random() * 12).toFixed(1);
+            targetSpeed.innerText = newSpeed;
+            
+            if (newSpeed < 0.5) {
+               targetDot.style.animationPlayState = 'paused';
+            } else {
+               targetDot.style.animationPlayState = 'running';
+               // Base duration 8s. Higher speed = lower duration.
+               // At 4 km/h -> duration 8s
+               // duration = (32 / speed)
+               let newDuration = 32 / newSpeed;
+               if (newDuration < 2) newDuration = 2; // cap max speed
+               if (newDuration > 20) newDuration = 20; // cap min speed
+               targetDot.style.animationDuration = newDuration + 's';
+            }
+         }, 2500); // Change speed every 2.5 seconds
+      }
+    </script>
+  </body>
+</html>
