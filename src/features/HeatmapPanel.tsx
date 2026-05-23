@@ -1,15 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { GoogleMap, useJsApiLoader, HeatmapLayer } from '@react-google-maps/api';
 import { ExternalLink, CornerUpRight } from 'lucide-react';
-import { useSystemStore } from '../store/useSystemStore';
+
 
 const containerStyle = { width: '100%', height: '100%' };
 const center = { lat: 40.7600, lng: -73.9800 }; // Centered near Manhattan
 const LIBRARIES: ("visualization" | "places")[] = ['visualization', 'places'];
 
 export function HeatmapPanel() {
-  const { isDarkMode } = useSystemStore();
   
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
