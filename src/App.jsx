@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useJsApiLoader } from '@react-google-maps/api';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { simulationService } from './services/MockSimulationService';
@@ -23,8 +24,16 @@ import { Notifications } from './features/Notifications';
 import { SelfLearningAI } from './features/SelfLearningAI';
 import { IOTConfig } from './features/IOTConfig';
 
+const LIBRARIES = ['visualization', 'places', 'geometry'];
+
 function App() {
   const { isDarkMode, activePanel } = useSystemStore();
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyBm0fsmZqqwy9ZkBhjP9lubSlOlQA9MW0Q',
+    libraries: LIBRARIES
+  });
 
   useEffect(() => {
     simulationService.start();

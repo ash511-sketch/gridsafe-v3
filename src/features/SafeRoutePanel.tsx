@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap } from '@react-google-maps/api';
 import { Navigation, MapPin } from 'lucide-react';
 import { useSystemStore } from '../store/useSystemStore';
 import { cn } from '../utils/cn';
@@ -11,12 +11,17 @@ const LIBRARIES: ("visualization" | "places")[] = ['visualization', 'places'];
 
 export function SafeRoutePanel() {
   const { isDarkMode } = useSystemStore();
-  
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyBm0fsmZqqwy9ZkBhjP9lubSlOlQA9MW0Q',
-    libraries: LIBRARIES
-  });
+  const [mapLoaded, setMapLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMap = setInterval(() => {
+      if (window.google && window.google.maps) {
+        setMapLoaded(true);
+        clearInterval(checkMap);
+      }
+    }, 100);
+    return () => clearInterval(checkMap);
+  }, []);
 
   const darkStyle = [ { elementType: 'geometry', stylers: [{color: '#242f3e'}] }, { elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}] }, { elementType: 'labels.text.fill', stylers: [{color: '#746855'}] }, { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{color: '#d59563'}] }, { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{color: '#d59563'}] }, { featureType: 'poi.park', elementType: 'geometry', stylers: [{color: '#263c3f'}] }, { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{color: '#6b9a76'}] }, { featureType: 'road', elementType: 'geometry', stylers: [{color: '#38414e'}] }, { featureType: 'road', elementType: 'geometry.stroke', stylers: [{color: '#212a37'}] }, { featureType: 'road', elementType: 'labels.text.fill', stylers: [{color: '#9ca5b3'}] }, { featureType: 'road.highway', elementType: 'geometry', stylers: [{color: '#746855'}] }, { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{color: '#1f2835'}] }, { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{color: '#f3d19c'}] }, { featureType: 'transit', elementType: 'geometry', stylers: [{color: '#2f3948'}] }, { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{color: '#d59563'}] }, { featureType: 'water', elementType: 'geometry', stylers: [{color: '#17263c'}] }, { featureType: 'water', elementType: 'labels.text.fill', stylers: [{color: '#515c6d'}] }, { featureType: 'water', elementType: 'labels.text.stroke', stylers: [{color: '#17263c'}] } ];
   const lightStyle = [ { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }, { lightness: 17 }] }, { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f5f5f5' }, { lightness: 20 }] }, { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#ffffff' }, { lightness: 17 }] }, { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#ffffff' }, { lightness: 29 }, { weight: 0.2 }] }, { featureType: 'road.arterial', elementType: 'geometry', stylers: [{ color: '#ffffff' }, { lightness: 18 }] }, { featureType: 'road.local', elementType: 'geometry', stylers: [{ color: '#ffffff' }, { lightness: 16 }] }, { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#f5f5f5' }, { lightness: 21 }] }, { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#dedede' }, { lightness: 21 }] }, { elementType: 'labels.text.stroke', stylers: [{ visibility: 'on' }, { color: '#ffffff' }, { lightness: 16 }] }, { elementType: 'labels.text.fill', stylers: [{ saturation: 36 }, { color: '#333333' }, { lightness: 40 }] }, { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] }, { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#f2f2f2' }, { lightness: 19 }] }, { featureType: 'administrative', elementType: 'geometry.fill', stylers: [{ color: '#fefefe' }, { lightness: 20 }] }, { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#fefefe' }, { lightness: 17 }, { weight: 1.2 }] } ];
@@ -31,19 +36,18 @@ export function SafeRoutePanel() {
         
         {/* Standard Route */}
         <div className="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg shadow-xl flex flex-col overflow-hidden relative">
-          <div className="absolute inset-0 z-0">
-            {isLoaded ? (
+          <div className="absolute inset-0 z-0 bg-slate-900 rounded-xl overflow-hidden">
+            {mapLoaded ? (
               <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={{ lat: 40.7138, lng: -74.0040 }}
-                zoom={15}
-                options={{
-                  styles: isDarkMode ? darkStyle : lightStyle,
-                  disableDefaultUI: true,
-                }}
+                center={center}
+                zoom={14}
+                options={{ styles: isDarkMode ? darkStyle : lightStyle, disableDefaultUI: true }}
               />
             ) : (
-              <div className="w-full h-full bg-black/5 dark:bg-white/5" />
+              <div className="w-full h-full flex items-center justify-center bg-black/10">
+                <span className="font-mono text-xs opacity-50 animate-pulse text-white">Initializing Map...</span>
+              </div>
             )}
           </div>
           <div className="absolute inset-0 bg-red-500/10 pointer-events-none z-10" />

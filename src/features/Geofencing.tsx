@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GoogleMap, useJsApiLoader, Polygon, Circle } from '@react-google-maps/api';
+import { GoogleMap, Polygon, Circle } from '@react-google-maps/api';
 import { MapPin, Plus, Save, Trash2, Power } from 'lucide-react';
 import { useSystemStore } from '../store/useSystemStore';
 import { cn } from '../utils/cn';
@@ -17,12 +17,17 @@ const GEOFENCES = [
 export function Geofencing() {
   const { isDarkMode } = useSystemStore();
   const [activeFences, setActiveFences] = useState(GEOFENCES);
+  const [mapLoaded, setMapLoaded] = React.useState(false);
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyBm0fsmZqqwy9ZkBhjP9lubSlOlQA9MW0Q',
-    libraries: LIBRARIES
-  });
+  React.useEffect(() => {
+    const checkMap = setInterval(() => {
+      if (window.google && window.google.maps) {
+        setMapLoaded(true);
+        clearInterval(checkMap);
+      }
+    }, 100);
+    return () => clearInterval(checkMap);
+  }, []);
 
   const darkStyle = [ { elementType: 'geometry', stylers: [{color: '#242f3e'}] }, { elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}] }, { elementType: 'labels.text.fill', stylers: [{color: '#746855'}] }, { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{color: '#d59563'}] }, { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{color: '#d59563'}] }, { featureType: 'road', elementType: 'geometry', stylers: [{color: '#38414e'}] }, { featureType: 'road', elementType: 'geometry.stroke', stylers: [{color: '#212a37'}] }, { featureType: 'road', elementType: 'labels.text.fill', stylers: [{color: '#9ca5b3'}] }, { featureType: 'water', elementType: 'geometry', stylers: [{color: '#17263c'}] } ];
   const lightStyle = [ { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }, { lightness: 17 }] }, { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f5f5f5' }, { lightness: 20 }] }, { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#ffffff' }, { lightness: 17 }] }, { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#ffffff' }, { lightness: 29 }, { weight: 0.2 }] } ];
@@ -86,17 +91,14 @@ export function Geofencing() {
         </div>
 
         <div className="bg-white/80 dark:bg-black/30 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-lg overflow-hidden shadow-xl lg:col-span-2 relative min-h-[400px]">
-          <div className="absolute inset-0 z-0">
-            {isLoaded ? (
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
-                zoom={14}
-                options={{
-                  styles: isDarkMode ? darkStyle : lightStyle,
-                  disableDefaultUI: true,
-                }}
-              >
+          <div className="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
+          {mapLoaded ? (
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={center}
+              zoom={14}
+              options={{ styles: isDarkMode ? darkStyle : lightStyle, disableDefaultUI: true }}
+            >
                 {activeFences.filter(f => f.status === 'active').map(fence => (
                   <Polygon
                     key={fence.id}
